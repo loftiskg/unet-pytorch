@@ -15,7 +15,7 @@ PREDICTION_PATH = './pred'  # output directory of predicted segmentations
 cuda = True    # Set to true if you want to use GPUs
 num_classes = 1 # number of classes in target
 epochs = 1
-save_weights = True  # save model weights?
+save_weights = False  # save model weights?
 learning_rate = .0001
 batch_size = 1
 #############################
@@ -33,9 +33,9 @@ if cuda:
 # Create DataLoader
 transform = transforms.Compose([data.Normalize(), data.ToTensor()])  # Define transformations to be done on data
 dat = data.SampleDataDriver(transform=transform)
-dataloader = DataLoader(dat, batch_size=1, shuffle=False, num_workers=1)
+dataloader = DataLoader(dat, batch_size=batch_size, shuffle=False, num_workers=1)
 
-optimizer = optim.Adam(model.parameters(), lr=0.0001)
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 ##############################################################################
 
 def inference(model):
