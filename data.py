@@ -36,10 +36,11 @@ class SampleDataDriver(Dataset):
             data = self.transform(data)
 
         return data
-
-class TwoClassOutput(object):
-    def __call__(self, sample):
-        input, target = sample['input'], sample['target']
+    
+# Not complete
+# class TwoClassOutput(object):
+#     def __call__(self, sample):
+#         input, target = sample['input'], sample['target']
 
 
 class ToTensor(object):
