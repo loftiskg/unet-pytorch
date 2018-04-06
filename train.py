@@ -5,25 +5,38 @@ from torchvision import transforms
 import torch.optim as optim
 from torch.autograd import Variable
 import torch.nn.functional as F
+import torch
 import os, shutil
 from PIL import Image
 import numpy as np
-from sklearn.preprocessing import minmax_scale
 
-PREDICTION_PATH = './pred'
+### Settings ###
+PREDICTION_PATH = './pred'  # output directory of predicted segmentations
+cuda = True    # Set to true if you want to use GPUs
+num_classes = 1 # number of classes in target
+epochs = 1
+save_weights = True  # save model weights?
+learning_rate = .0001
+batch_size = 1
+#############################
 
-cuda = True
-model = model.UNet(1)
+
+
+
+
+### Initialize Model, Data, and Optimizers
+model = model.UNet(num_classes) # initialize model
+
 if cuda:
-    model = model.cuda()
+    model = model.cuda() # converts model params into cuda tensors
 
-transform = transforms.Compose([data.Normalize(), data.ToTensor()])
+# Create DataLoader
+transform = transforms.Compose([data.Normalize(), data.ToTensor()])  # Define transformations to be done on data
 dat = data.SampleDataDriver(transform=transform)
 dataloader = DataLoader(dat, batch_size=1, shuffle=False, num_workers=1)
 
 optimizer = optim.Adam(model.parameters(), lr=0.0001)
-
-epochs = 3
+##############################################################################
 
 def inference(model):
     if os.path.exists(PREDICTION_PATH):
@@ -60,12 +73,12 @@ def train(epoch):
             target = target.cuda()
         optimizer.zero_grad()
         output = model(input)
-        #output_2 = output.permute(2, 3, 0, 1).contiguous().view(-1, 1)
         loss = F.mse_loss(output, target)
         loss.backward()
         optimizer.step()
         if batch_idx % 10 == 0:
             print('Train Epoch: {}\tLoss: {:.6f}'.format(epoch, loss.data[0]))
+
 
 def normalize(array):
     array_shape = array.shape
@@ -80,10 +93,19 @@ def normalize(array):
 
     return array_normalized
 
+def save_model(model,path='./model/model_weigths.pt'):
+    print("Saving Model a {}".format(path))
+    torch.save(model.state_dict(), path)
+    print('Model Saved')
+
 
 def main():
     for epoch in range(epochs):
         train(epoch)
+    if save_weights:
+        if not os.path.exists('./model'):
+            os.makedirs('./model')
+        save_model(model,path = './model/model.weights.pt')
     inference(model)
     print("Complete")
 

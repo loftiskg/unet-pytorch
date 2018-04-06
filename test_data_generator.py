@@ -2,8 +2,11 @@ import numpy as np
 from PIL import Image, ImageFilter, ImageMath
 import os, shutil
 
+
+'''Funtions to help create custom sample data to run tests on'''
+
 def generate_images(size = [1024,1024], n = 100, output_dir = './sample_data', min_percent = 0.5, max_percent = 0.75):
-    """Generates a sample of images of size size with random noise with a randomly sized gaussian filter cube"""
+    """Generates a sample of images of size size with random noise with a randomly sized gaussian filter rectangle"""
     input_dir = os.path.join(output_dir,'input')
     target_dir = os.path.join(output_dir,'target')
     if os.path.exists(output_dir):

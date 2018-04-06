@@ -63,23 +63,11 @@ if __name__ == '__main__':
     print(input)
     print(target)
 
-    #input = np.uint8((input+0.5)*255)
-    #target = np.uint8((target + 0.5) * 255)
-
-    #input_size = input.shape
-    #target_size = target.shape
-
-    #input = input.flatten()
-    #target = target.flatten()
     input = np.squeeze(input)
     target = np.squeeze(target)
 
-
-
-    input = minmax_scale(input, feature_range=(0,255))
-    target = minmax_scale(target, feature_range=(0,255))
-
-
+    input = minmax_scale(input, feature_range=(0, 255))
+    target = minmax_scale(target, feature_range=(0, 255))
 
     print(input)
     print(target)
