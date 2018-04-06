@@ -1,36 +1,12 @@
-# U-Net implementation in PyTorch
+## model.py
+*  Contains the unet model. **The implementation of the unet architecture is not my own.  This unet implementation was built by jaxony.  See his repository for more details. https://github.com/jaxony/unet-pytorch**
 
-The U-Net is an encoder-decoder neural network used for **semantic segmentation**. The implementation in this repository is a modified version of the U-Net proposed in [this paper](https://arxiv.org/abs/1505.04597).
+## data.py
+* contains the dataset class that I use to test the architecture.
 
-![U-Net Architecture](unet-architecture.png)
+## test_data_genereator.py
+* script that creates and saves images/label pairs of a specified size with random patches of the image blurred.  The label of a respective image corresponds with blur area of that image.  These images are the test images used by data data.py.  This is admitly a little buggy, but it does the trick for a simple test to see if the model converges.
 
-## Features
+## train.py
+* trains the model using the test images and performs inference.  Saves the predicted masks to file.  Has the option to save the model weights.
 
-1. **You can alter the U-Net's depth.**
-The original U-Net uses a depth of 5, as depicted in the diagram above. The word "depth" specifically 
-refers to the number of *different* spatially-sized convolutional outputs. With this U-Net implementation, you can easily vary the depth.
-
-2. **You can merge decoder and encoder pathways in two ways.**
-In the original U-Net, the decoder and encoder activations are merged by concatenating channels.
-I've implemented a ResNet-style merging of the decoder and encoder activations by adding
-these activations. This was easy to code up, but it may not make sense theoretically and has not been tested.
-
-## Pixel-wise loss for semantic segmentation
-I had some trouble getting the pixel-wise loss working correctly for a semantic segmentation task.
-Here's how I got it working in the end.
-
-```python
-from model import UNet
-
-model = UNet()
-
-# set up dataloaders, etc.
-
-output = model(some_input_data)
-
-# permute is like np.transpose: (N, C, H, W) => (H, W, N, C)
-# contiguous is required because of this issue: https://github.com/pytorch/pytorch/issues/764
-# view: reshapes the output tensor so that we have (H * W * N, num_class)
-# NOTE: num_class == C (number of output channels)
-output = output.permute(2, 3, 0, 1).contiguous().view(-1, num_classes)
-```
