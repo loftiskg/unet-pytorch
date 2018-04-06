@@ -51,6 +51,7 @@ def inference(model):
         img = tensor_to_PIL(y_pred)
         img.save(os.path.join(PREDICTION_PATH, 'prediction_{:03d}.png'.format(i)))
 
+# takes a pytorch tensor and converts to a 0-255 PIL image
 def tensor_to_PIL(tensor):
     if tensor.is_cuda:
         tensor = tensor.data.cpu().numpy()
@@ -79,7 +80,7 @@ def train(epoch):
         if batch_idx % 10 == 0:
             print('Train Epoch: {}\tLoss: {:.6f}'.format(epoch, loss.data[0]))
 
-
+# Normalizes a 2D array for all values to be between 0 and 1
 def normalize(array):
     array_shape = array.shape
 
@@ -88,11 +89,11 @@ def normalize(array):
     array_max = np.amax(array)
 
     array_normalized = (array - array_min)/(array_max-array_min)
-
     array_normalized = array_normalized.reshape(array_shape)
 
     return array_normalized
 
+# Saves model parameters to file
 def save_model(model,path='./model/model_weigths.pt'):
     print("Saving Model a {}".format(path))
     torch.save(model.state_dict(), path)
@@ -100,6 +101,8 @@ def save_model(model,path='./model/model_weigths.pt'):
 
 
 def main():
+    # Start Training
+    print("Starting Training")
     for epoch in range(epochs):
         train(epoch)
     if save_weights:
